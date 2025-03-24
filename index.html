@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanFix - Community Issue Reporting</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+            --background: #f9fafb;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --border-radius: 0.375rem;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(37, 99, 235, 0.8), rgba(29, 78, 216, 0.8)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            text-align: center;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Report Form */
+        .report-form {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px dashed var(--gray-300);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-label:hover {
+            border-color: var(--primary);
+            background-color: var(--gray-100);
+        }
+
+        .file-preview {
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .file-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--border-radius);
+        }
+
+        /* Map */
+        .map-container {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            height: 100%;
+        }
+
+        #map {
+            height: 400px;
+            border-radius: var(--border-radius);
+            background-color: var(--gray-200);
+        }
+
+        /* Issues List */
+        .issues-list {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .issue-card {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .issue-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .issue-type {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .type-pothole {
+            background-color: var(--warning);
+            color: var(--white);
+        }
+
+        .type-streetlight {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .type-waste {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .issue-date {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .issue-location {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .issue-description {
+            margin-bottom: 0.5rem;
+        }
+
+        .issue-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-pending {
+            background-color: var(--warning);
+        }
+
+        .status-in-progress {
+            background-color: var(--primary);
+        }
+
+        .status-resolved {
+            background-color: var(--secondary);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text);
+            color: var(--white);
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--white);
+            transition: all 0.2s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        /* Mobile Navigation */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            nav {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 70%;
+                height: 100vh;
+                background-color: var(--white);
+                box-shadow: var(--shadow);
+                transition: left 0.3s ease;
+                z-index: 1000;
+            }
+
+            nav.active {
+                left: 0;
+            }
+
+            nav ul {
+                flex-direction: column;
+                padding: 2rem;
+            }
+
+            .auth-buttons {
+                display: none;
+            }
+
+            .header-content {
+                justify-content: space-between;
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--white);
+            color: var(--text);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--secondary);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        .toast-close {
+            margin-left: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 90%;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    UrbanFix
+                </div>
+                <button class="mobile-menu-btn">☰</button>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">Home</a></li>
+                        <li><a href="#">Report Issue</a></li>
+                        <li><a href="#">Issues Map</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="login-btn">Login</button>
+                    <button class="btn btn-primary" id="signup-btn">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Help Improve Your Community</h1>
+            <p>Report urban issues like potholes, broken streetlights, or illegal waste dumping and track their resolution progress.</p>
+            <button class="btn btn-primary" id="report-issue-btn">Report an Issue</button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <h2 class="section-title">Report & Track Urban Issues</h2>
+            
+            <div class="two-column">
+                <!-- Report Form -->
+                <div class="report-form">
+                    <h3>Report an Issue</h3>
+                    <form id="issue-form">
+                        <div class="form-group">
+                            <label for="issue-type">Issue Type</label>
+                            <select id="issue-type" class="form-control" required>
+                                <option value="">Select issue type</option>
+                                <option value="pothole">Pothole</option>
+                                <option value="streetlight">Broken Streetlight</option>
+                                <option value="waste">Illegal Waste Dumping</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" class="form-control" placeholder="Enter address or use current location" required>
+                            <button type="button" id="use-location" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                </svg>
+                                Use My Current Location
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" class="form-control" placeholder="Describe the issue in detail" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="photo" class="file-label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                Upload Photo (Optional)
+                            </label>
+                            <input type="file" id="photo" class="file-input" accept="image/*">
+                            <div class="file-preview" id="photo-preview"></div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Report</button>
+                    </form>
+                    <div class="spinner" id="form-spinner"></div>
+                </div>
+                
+                <!-- Map -->
+                <div class="map-container">
+                    <h3>Issues Map</h3>
+                    <div id="map"></div>
+                </div>
+            </div>
+            
+            <!-- Issues List -->
+            <div class="issues-list">
+                <h3>Recent Reports</h3>
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pothole">Potholes</button>
+                    <button class="filter-btn" data-filter="streetlight">Streetlights</button>
+                    <button class="filter-btn" data-filter="waste">Waste Dumping</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="in-progress">In Progress</button>
+                    <button class="filter-btn" data-filter="resolved">Resolved</button>
+                </div>
+                
+                <div id="issues-container">
+                    <!-- Issues will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <h2>Community Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-reports">0</div>
+                    <div class="stat-label">Total Reports</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="resolved-issues">0</div>
+                    <div class="stat-label">Resolved Issues</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="active-users">0</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="response-time">0</div>
+                    <div class="stat-label">Avg. Response Time (days)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>UrbanFix</h3>
+                    <p>A community-driven platform for reporting and resolving urban issues to create better living environments for everyone.</p>
+                    <div class="social-links">
+                        <a href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                            </svg>
+                        </a>
+                        <a href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                            </svg>
+                        </a>
+                        <a href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Report Issue</a></li>
+                        <li><a href="#">Issues Map</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Community Guidelines</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            (123) 456-7890
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            support@urbanfix.com
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            123 Main Street, City, Country
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 UrbanFix. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon" id="toast-icon"></div>
+        <div class="toast-message" id="toast-message"></div>
+        <button class="toast-close" id="toast-close">×</button>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Login</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline modal-close">Cancel</button>
+                <button class="btn btn-primary" id="login-submit">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signup-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Sign Up</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline modal-close">Cancel</button>
+                <button class="btn btn-primary" id="signup-submit">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Sample data for issues
+        const sampleIssues = [
+            {
+                id: 1,
+                type: 'pothole',
+                location: '123 Main St, Cityville',
+                description: 'Large pothole in the middle of the road causing traffic hazards.',
+                date: '2025-03-15',
+                status: 'pending',
+                coordinates: { lat: 40.7128, lng: -74.006 }
+            },
+            {
+                id: 2,
+                type: 'streetlight',
+                location: '456 Oak Ave, Townsburg',
+                description: 'Streetlight has been out for over a week, creating safety concerns at night.',
+                date: '2025-03-10',
+                status: 'in-progress',
+                coordinates: { lat: 40.7148, lng: -74.008 }
+            },
+            {
+                id: 3,
+                type: 'waste',
+                location: '789 Pine Rd, Villageton',
+                description: 'Illegal dumping of construction materials on the sidewalk.',
+                date: '2025-03-05',
+                status: 'resolved',
+                coordinates: { lat: 40.7118, lng: -74.003 }
+            },
+            {
+                id: 4,
+                type: 'pothole',
+                location: '321 Elm St, Hamletville',
+                description: 'Multiple potholes along the street damaging vehicles.',
+                date: '2025-03-01',
+                status: 'in-progress',
+                coordinates: { lat: 40.7138, lng: -74.009 }
+            },
+            {
+                id: 5,
+                type: 'waste',
+                location: '654 Maple Dr, Boroughtown',
+                description: 'Household waste dumped in the park area.',
+                date: '2025-02-25',
+                status: 'pending',
+                coordinates: { lat: 40.7158, lng: -74.002 }
+            }
+        ];
+
+        // DOM Elements
+        const issuesContainer = document.getElementById('issues-container');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const issueForm = document.getElementById('issue-form');
+        const photoInput = document.getElementById('photo');
+        const photoPreview = document.getElementById('photo-preview');
+        const useLocationBtn = document.getElementById('use-location');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastClose = document.getElementById('toast-close');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const modalCloseButtons = document.querySelectorAll('.modal-close');
+        const loginSubmit = document.getElementById('login-submit');
+        const signupSubmit = document.getElementById('signup-submit');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const nav = document.querySelector('nav');
+        const reportIssueBtn = document.getElementById('report-issue-btn');
+        const formSpinner = document.getElementById('form-spinner');
+
+        // Stats elements
+        const totalReportsEl = document.getElementById('total-reports');
+        const resolvedIssuesEl = document.getElementById('resolved-issues');
+        const activeUsersEl = document.getElementById('active-users');
+        const responseTimeEl = document.getElementById('response-time');
+
+        // Initialize map (mock implementation)
+        let map = null;
+        let markers = [];
+
+        function initMap() {
+            // This is a mock implementation since we can't load Google Maps without an API key
+            console.log('Map initialized');
+            const mapElement = document.getElementById('map');
+            
+            // Create a simple placeholder for the map
+            mapElement.innerHTML = `
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; background-color: #e5e7eb; border-radius: 0.375rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <p style="margin-top: 1rem; color: #4b5563;">Map would load here with a valid Google Maps API key</p>
+                    <p style="color: #6b7280; font-size: 0.875rem;">Issues are displayed as markers on the map</p>
+                </div>
+            `;
+            
+            // Add markers for sample issues
+            addMarkersToMap();
+        }
+
+        function addMarkersToMap() {
+            // Mock implementation for adding markers
+            console.log('Adding markers to map');
+            markers = sampleIssues.map(issue => ({
+                id: issue.id,
+                position: issue.coordinates,
+                type: issue.type
+            }));
+        }
+
+        // Display issues in the list
+        function displayIssues(issues) {
+            issuesContainer.innerHTML = '';
+            
+            if (issues.length === 0) {
+                issuesContainer.innerHTML = '<p>No issues found matching the selected filter.</p>';
+                return;
+            }
+            
+            issues.forEach(issue => {
+                const issueCard = document.createElement('div');
+                issueCard.className = 'issue-card';
+                issueCard.dataset.type = issue.type;
+                issueCard.dataset.status = issue.status;
+                
+                const statusText = {
+                    'pending': 'Pending Review',
+                    'in-progress': 'In Progress',
+                    'resolved': 'Resolved'
+                };
+                
+                issueCard.innerHTML = `
+                    <div class="issue-header">
+                        <span class="issue-type type-${issue.type}">${issue.type.charAt(0).toUpperCase() + issue.type.slice(1)}</span>
+                        <span class="issue-date">${formatDate(issue.date)}</span>
+                    </div>
+                    <div class="issue-location">${issue.location}</div>
+                    <div class="issue-description">${issue.description}</div>
+                    <div class="issue-status">
+                        <span class="status-indicator status-${issue.status}"></span>
+                        ${statusText[issue.status]}
+                    </div>
+                `;
+                
+                issuesContainer.appendChild(issueCard);
+            });
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Filter issues
+        function filterIssues(filter) {
+            let filteredIssues;
+            
+            if (filter === 'all') {
+                filteredIssues = sampleIssues;
+            } else if (['pothole', 'streetlight', 'waste'].includes(filter)) {
+                filteredIssues = sampleIssues.filter(issue => issue.type === filter);
+            } else {
+                filteredIssues = sampleIssues.filter(issue => issue.status === filter);
+            }
+            
+            displayIssues(filteredIssues);
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            
+            if (type === 'success') {
+                toast.className = 'toast toast-success';
+                toastIcon.innerHTML = '✓';
+                toastIcon.style.color = 'var(--secondary)';
+            } else {
+                toast.className = 'toast toast-error';
+                toastIcon.innerHTML = '✗';
+                toastIcon.style.color = 'var(--danger)';
+            }
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        // Update stats
+        function updateStats() {
+            const totalReports = sampleIssues.length;
+            const resolvedIssues = sampleIssues.filter(issue => issue.status === 'resolved').length;
+            
+            // Animate counting up
+            animateCounter(totalReportsEl, 0, totalReports, 1500);
+            animateCounter(resolvedIssuesEl, 0, resolvedIssues, 1500);
+            animateCounter(activeUsersEl, 0, 127, 1500);
+            animateCounter(responseTimeEl, 0, 3.5, 1500, 1);
+        }
+
+        function animateCounter(element, start, end, duration, decimals = 0) {
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                const value = start + (end - start) * progress;
+                
+                element.textContent = value.toFixed(decimals);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = end.toFixed(decimals);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the map
+            initMap();
+            
+            // Display initial issues
+            displayIssues(sampleIssues);
+            
+            // Update stats
+            updateStats();
+            
+            // Filter buttons
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterIssues(button.dataset.filter);
+                });
+            });
+            
+            // Photo upload preview
+            photoInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        photoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                        photoPreview.style.display = 'block';
+                    };
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
+            // Use current location
+            useLocationBtn.addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    formSpinner.style.display = 'block';
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            // In a real app, we would use a geocoding service to get the address
+                            document.getElementById('location').value = `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`;
+                            formSpinner.style.display = 'none';
+                            showToast('Location detected successfully');
+                        },
+                        (error) => {
+                            console.error('Error getting location:', error);
+                            formSpinner.style.display = 'none';
+                            showToast('Could not get your location. Please enter it manually.', 'error');
+                        }
+                    );
+                } else {
+                    showToast('Geolocation is not supported by your browser', 'error');
+                }
+            });
+            
+            // Form submission
+            issueForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                formSpinner.style.display = 'block';
+                
+                // Simulate form submission delay
+                setTimeout(() => {
+                    const newIssue = {
+                        id: sampleIssues.length + 1,
+                        type: document.getElementById('issue-type').value,
+                        location: document.getElementById('location').value,
+                        description: document.getElementById('description').value,
+                        date: new Date().toISOString().split('T')[0],
+                        status: 'pending',
+                        coordinates: { lat: 40.7168, lng: -74.005 } // Mock coordinates
+                    };
+                    
+                    sampleIssues.unshift(newIssue);
+                    displayIssues(sampleIssues);
+                    filterButtons.forEach(btn => {
+                        if (btn.dataset.filter === 'all') {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    
+                    // Update stats
+                    updateStats();
+                    
+                    // Reset form
+                    issueForm.reset();
+                    photoPreview.style.display = 'none';
+                    photoPreview.innerHTML = '';
+                    
+                    formSpinner.style.display = 'none';
+                    showToast('Issue reported successfully! Thank you for your contribution.');
+                }, 1500);
+            });
+            
+            // Toast close button
+            toastClose.addEventListener('click', () => {
+                toast.classList.remove('show');
+            });
+            
+            // Modal open/close
+            loginBtn.addEventListener('click', () => {
+                loginModal.classList.add('active');
+            });
+            
+            signupBtn.addEventListener('click', () => {
+                signupModal.classList.add('active');
+            });
+            
+            modalCloseButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    loginModal.classList.remove('active');
+                    signupModal.classList.remove('active');
+                });
+            });
+            
+            // Modal form submission
+            loginSubmit.addEventListener('click', () => {
+                // Simulate login
+                setTimeout(() => {
+                    loginModal.classList.remove('active');
+                    showToast('Login successful! Welcome back.');
+                }, 1000);
+            });
+            
+            signupSubmit.addEventListener('click', () => {
+                // Simulate signup
+                setTimeout(() => {
+                    signupModal.classList.remove('active');
+                    showToast('Account created successfully! Welcome to UrbanFix.');
+                }, 1000);
+            });
+            
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+            
+            // Report issue button in hero section
+            reportIssueBtn.addEventListener('click', () => {
+                document.querySelector('.report-form').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
